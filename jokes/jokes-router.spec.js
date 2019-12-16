@@ -28,3 +28,28 @@ describe("Get all jokes", () => {
     testToken = res.body.token;
   });
 });
+
+describe("Wrong Token", () => {
+  it("should not return jokes", async () => {
+    const res = await request(server)
+      .get("/api/jokes")
+      .set("authorization", "kfjdlsajflkdsajlkfsdaj");
+
+    console.log(res.status.message);
+
+    expect(res.status).toBe(401);
+  });
+
+  beforeEach(async () => {
+    await db("users").truncate();
+    await request(server)
+      .post("/api/auth/register")
+      .send({ username: "CodyCaro", password: "password" });
+
+    const res = await request(server)
+      .post("/api/auth/login")
+      .send({ username: "CodyCaro", password: "password" });
+
+    testToken = res.body.token;
+  });
+});
